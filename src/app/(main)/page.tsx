@@ -1,3 +1,4 @@
+import PostEditor from "@/components/posts/editor/PostEditor";
 import Image from "next/image";
 
 export default function Home() {
@@ -8,7 +9,7 @@ export default function Home() {
       <div
         className="w-full"
       >
-        front
+        <PostEditor />
       </div>
     </main>
   );
