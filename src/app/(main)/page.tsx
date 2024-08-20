@@ -2,6 +2,14 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <main>front page</main>
+    <main
+      className="w-full"
+    >
+      <div
+        className="w-full"
+      >
+        front
+      </div>
+    </main>
   );
 }
