@@ -43,7 +43,7 @@ export default function PostEditor() {
         <UserAvatar avatarUrl={user.avatarUrl} className="hidden sm:inline"/>
         <EditorContent editor={editor} className="w-full max-h-[20rem] overflow-y-auto bg-background rounded-2xl px-5 py-3" />
       </div>
-      <div className="flex justify-end">
+      <div className="flex justify-end mt-2">
         <Button onClick={onSubmit} disabled={!input.trim()} className="min-w-20">Post</Button>
       </div>
     </div>
