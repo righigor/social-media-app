@@ -16,19 +16,22 @@ datasource db {
 }
 
 model User {
-  id           String    @id
-  username     String    @unique
+  id           String  @id
+  username     String  @unique
   displayName  String
-  email        String?   @unique
+  email        String? @unique
   passwordHash String?
-  googleId     String?   @unique
+  googleId     String? @unique
   avatarUrl    String?
   bio          String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  sessions      Session[]
+  following Follow[]  @relation("Following")
+  followers Follow[]  @relation("Followers")
+  sessions  Session[]
+  posts     Post[]
 
   @@map("users")
 }
@@ -40,4 +43,26 @@ model Session {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
+}
+
+model Follow {
+  followerId  String
+  followingId String
+
+  follower  User    @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  following User    @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("posts")
 }
