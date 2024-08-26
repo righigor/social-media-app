@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import kyInstance from "@/lib/ky";
 import { UserData } from "@/lib/types";
@@ -20,14 +20,15 @@ export default function UserLinkWithTooltip({
     queryKey: ["user-data", username],
     queryFn: () => kyInstance.get(`/api/users/${username}`).json<UserData>(),
     retry(failureCount, error) {
-      if (error instanceof HTTPError && error.response.status === 404)
+      if (error instanceof HTTPError && error.response.status === 404) {
         return false;
+      }
       return failureCount < 3;
     },
     staleTime: Infinity,
   });
 
-  if (!data)
+  if (!data) {
     return (
       <Link
         href={`/users/${username}`}
@@ -36,9 +37,13 @@ export default function UserLinkWithTooltip({
         {children}
       </Link>
     );
+  }
   return (
     <UserTooltip user={data}>
-      <Link href={`/users/${username}`} className="text-primary hover:underline">
+      <Link
+        href={`/users/${username}`}
+        className="text-primary hover:underline"
+      >
         {children}
       </Link>
     </UserTooltip>
