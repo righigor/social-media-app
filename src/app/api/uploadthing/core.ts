@@ -19,7 +19,7 @@ export const fileRouter = {
       if (oldAvatarUrl) {
         const key = oldAvatarUrl.split(`/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`)[1];
 
-        await new UTApi().deleteFile(key);
+        await new UTApi().deleteFiles(key);
       }
       const newAvatarUrl = file.url.replace(
         "/f/",
