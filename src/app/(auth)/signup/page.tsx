@@ -23,15 +23,11 @@ export default function Page() {
               A place where even <span className="italic">you</span> find a friend.
             </p>
           </div>
-
           <div className="space-y-5">
             <SignUpForm />
             <Link href="/login" className="block text-center hover:underline">
             Already have an account? Log in</Link>
           </div>
-
-
-
         </div>
         <Image
           src={signupImage}
