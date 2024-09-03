@@ -10,6 +10,7 @@ import Linkify from "../Linkify";
 import UserTooltip from "../UserTooltip";
 import { Media } from "@prisma/client";
 import Image from "next/image";
+import LikeButton from "./LikeButton";
 
 interface PostProps {
   post: PostData;
@@ -54,7 +55,17 @@ export default function Post({ post }: PostProps) {
       <Linkify>
         <div className="whitespace-pre-line break-words">{post.content}</div>
       </Linkify>
-      {!!post.attachmentes.length && <MediaPreviews attachmentes={post.attachmentes} />}
+      {!!post.attachmentes.length && (
+        <MediaPreviews attachmentes={post.attachmentes} />
+      )}
+      <hr className="text-muted-foreground" />
+      <LikeButton
+        postId={post.id}
+        initialState={{
+          likes: post._count.likes,
+          isLikedByUser: post.likes.some((like) => like.userId === user?.id),
+        }}
+      />
     </article>
   );
 }
@@ -98,10 +109,14 @@ function MediaPreview({ media }: MediaPreviewProps) {
   if (media.type === "VIDEO") {
     return (
       <div>
-        <video controls className="mx-auto size-fit max-h-[30rem] rounded-2xl" src={media.url} />
+        <video
+          controls
+          className="mx-auto size-fit max-h-[30rem] rounded-2xl"
+          src={media.url}
+        />
       </div>
     );
   }
 
-  return <p className="text-destructive">Unsupported media type</p>
+  return <p className="text-destructive">Unsupported media type</p>;
 }
