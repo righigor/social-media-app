@@ -28,13 +28,15 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  following Follow[]   @relation("Following")
-  followers Follow[]   @relation("Followers")
-  sessions  Session[]
-  posts     Post[]
-  likes     Like[]
-  bookmarks Bookmark[]
-  comments  Comment[]
+  following            Follow[]       @relation("Following")
+  followers            Follow[]       @relation("Followers")
+  sessions             Session[]
+  posts                Post[]
+  likes                Like[]
+  bookmarks            Bookmark[]
+  comments             Comment[]
+  receivedNotification Notification[] @relation("Recipient")
+  issuedNotification   Notification[] @relation("Issuer")
 
   @@map("users")
 }
@@ -71,7 +73,8 @@ model Post {
 
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  linkedNotification Notification[]
 
   @@map("posts")
 }
@@ -130,4 +133,27 @@ model Bookmark {
 
   @@unique([userId, postId])
   @@map("bookmarks")
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  recipientId String
+  issuerId    String
+  postId      String?
+  type        NotificationType
+  read        Boolean          @default(false)
+
+  createdAt DateTime @default(now())
+
+  recipient User  @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  issuer    User  @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
+  post      Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  LIKE
+  COMMENT
+  FOLLOW
 }
