@@ -28,11 +28,15 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  following Follow[]  @relation("Following")
-  followers Follow[]  @relation("Followers")
-  sessions  Session[]
-  posts     Post[]
-  likes      Like[]
+  following            Follow[]       @relation("Following")
+  followers            Follow[]       @relation("Followers")
+  sessions             Session[]
+  posts                Post[]
+  likes                Like[]
+  bookmarks            Bookmark[]
+  comments             Comment[]
+  receivedNotification Notification[] @relation("Recipient")
+  issuedNotification   Notification[] @relation("Issuer")
 
   @@map("users")
 }
@@ -58,16 +62,19 @@ model Follow {
 }
 
 model Post {
-  id           String   @id @default(cuid())
-  userId       String
-  content      String
-  
+  id      String @id @default(cuid())
+  userId  String
+  content String
+
   attachmentes Media[]
-  likes Like[]
+  likes        Like[]
+  bookmarks    Bookmark[]
+  comments     Comment[]
 
-  createdAt    DateTime @default(now())
+  createdAt DateTime @default(now())
 
-  user User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  linkedNotification Notification[]
 
   @@map("posts")
 }
@@ -89,6 +96,20 @@ enum MediaType {
   VIDEO
 }
 
+model Comment {
+  id      String @id @default(cuid())
+  userId  String
+  postId  String
+  content String
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
 model Like {
   userId String
   postId String
@@ -98,4 +119,41 @@ model Like {
 
   @@unique([userId, postId])
   @@map("likes")
+}
+
+model Bookmark {
+  id     String @id @default(cuid())
+  userId String
+  postId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@map("bookmarks")
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  recipientId String
+  issuerId    String
+  postId      String?
+  type        NotificationType
+  read        Boolean          @default(false)
+
+  createdAt DateTime @default(now())
+
+  recipient User  @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  issuer    User  @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
+  post      Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  LIKE
+  COMMENT
+  FOLLOW
 }
