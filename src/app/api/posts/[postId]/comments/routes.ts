@@ -8,9 +8,9 @@ export async function GET(
   { params: { postId } }: { params: { postId: string } },
 ) {
   try {
-    const { user: loggedInUser } = await validateRequest();
+    const { user } = await validateRequest();
     
-    if (!loggedInUser) {
+    if (!user) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -20,7 +20,7 @@ export async function GET(
 
     const comments = await prisma.comment.findMany({
       where: { postId },
-      include: getCommentDataInclude(loggedInUser.id),
+      include: getCommentDataInclude(user.id),
       orderBy: { createdAt: "asc" },
       take: -pageSize - 1,
       cursor: cursor ? { id: cursor } : undefined,
